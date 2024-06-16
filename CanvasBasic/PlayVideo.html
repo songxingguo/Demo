@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>使用原生 Canvas 播放视频</title>
+  </head>
+  <body>
+    <div>
+      <video
+        id="myVideo"
+        width="400px"
+        height="225px"
+        autoplay="autoplay"
+        muted
+        controls
+        crossorigin="anonymous"
+      >
+        <source
+          src="https://lf3-static.bytednsdoc.com/obj/eden-cn/nupenuvpxnuvo/xgplayer_doc/xgplayer-demo.mp4"
+        />
+        您的浏览器不支持 HTML5 video 元素。
+      </video>
+    </div>
+    <!-- 自定义 Canvas 播放 -->
+    <!-- <p>Canvas 显示:</p> -->
+    <!-- <canvas width="400px" height="225px"></canvas> -->
+    <script>
+      class Video2Canvas {
+        static PLAY_STATUC = { PLAY: 1, PAUSE: 0 };
+
+        constructor(video, canvas) {
+          this.statuc = Video2Canvas.PLAY_STATUC.PAUSE;
+          this.video = video;
+          // 自动创建Canvas
+          if (!(this.canvas = canvas)) {
+            this.canvas = document.createElement("canvas");
+            this.canvas.width = video.clientWidth;
+            this.canvas.height = video.clientHeight;
+            this.canvas.className = video.className;
+            video.style.display = "none";
+            video.parentNode.appendChild(this.canvas);
+          }
+          this.c2d = this.canvas.getContext("2d");
+          this.video.addEventListener("play", this.play.bind(this));
+          this.video.addEventListener("pause", this.pause.bind(this));
+        }
+
+        render() {
+          if (this.statuc == Video2Canvas.PLAY_STATUC.PLAY) {
+            this.c2d.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.c2d.drawImage(
+              this.video,
+              0,
+              0,
+              this.canvas.width,
+              this.canvas.height
+            );
+            requestAnimationFrame(this.render.bind(this)); // 渲染视频帧
+          }
+        }
+
+        play() {
+          console.log("播放");
+          if (this.video.paused) this.video.play();
+          this.statuc = Video2Canvas.PLAY_STATUC.PLAY;
+          this.render();
+          return this;
+        }
+
+        pause() {
+          console.log("暂停");
+          if (this.video.played) this.video.pause();
+          this.statuc = Video2Canvas.PLAY_STATUC.PAUSE;
+          return this;
+        }
+      }
+
+      // 使用方法：1
+      const video = document.querySelector("video"); // 获取到视频标签
+      // 实例化 Canvas 对象并播放，该操作会自动创建一个 Canvas 标签放到 video 标签同级并隐鲹原有的 video 标签
+      const v2c = new Video2Canvas(video).play();
+
+      // 使用方法：2
+      // const video = document.querySelector("video"); // 获取到视频标签
+      // const canvas = document.querySelector("canvas"); // 获取到自己准备好的canvas标签
+      // 实例化 Canvas 对象并播放
+      // const v2c = new Video2Canvas(video, canvas).play();
+    </script>
+  </body>
+</html>

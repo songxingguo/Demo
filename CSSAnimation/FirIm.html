@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>fir.im网站</title>
+    <style type="text/css">
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #container {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        background-color: #1b1b1b;
+      }
+
+      /*入场动画*/
+      #container .circle {
+        width: 118px;
+        height: 118px;
+        border-radius: 50%;
+        background: url(https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/loading-Home.gif);
+        background-position: -10px -10px;
+        background-color: #ffd200;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: -59px -59px;
+        animation: enlargeCircle 4s 3s forwards;
+      }
+      @keyframes enlargeCircle {
+        0 % {
+          background: url(https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/loading-Home.gif);
+        }
+        1% {
+          background-image: none;
+          transform: scale(0);
+        }
+        100% {
+          background-image: none;
+          transform: scale(50);
+        }
+      }
+
+      /*飞机动画*/
+      .plane-wrapper {
+        position: absolute;
+        width: 800px;
+        height: 400px;
+        animation: undulate 8s linear infinite alternate;
+      }
+      .plane-wrapper .plane {
+        max-width: 100%;
+        width: 100%;
+      }
+      .plane-wrapper .rotate-container {
+        position: absolute;
+        left: 105px;
+        top: 205px;
+        animation: rotating 0.2s linear infinite reverse;
+      }
+      .plane-wrapper .propeller {
+        width: 100%;
+        transform: rotateY(-28deg);
+      }
+      @keyframes rotating {
+        0% {
+          transform: rotate(0) rotateY(-20deg);
+        }
+        50% {
+          transform: rotate(180deg) rotateY(-20deg);
+        }
+        100% {
+          transform: rotate(360deg) rotateY(-20deg);
+        }
+      }
+      @keyframes undulate {
+        0%,
+        100%,
+        50% {
+          transform: translate3d(0, 0, 0);
+        }
+        25% {
+          transform: translate3d(-6px, -18px, 0);
+        }
+        75% {
+          transform: translate3d(6px, 10px, 0);
+        }
+      }
+
+      /*入场动画*/
+      #container .enter {
+        position: absolute;
+        left: 120%;
+        top: 0;
+        animation: enter 3s 3s linear forwards;
+      }
+      @keyframes enter {
+        from {
+          transform: scale(0.5);
+          left: 120%;
+          top: 0;
+        }
+        to {
+          transform: scale(1);
+          top: 50%;
+          left: 50%;
+          margin: -200px 0 0 -400px;
+        }
+      }
+
+      /*出场动画*/
+      #container .leave {
+        position: absolute;
+        animation: leave 3s linear forwards;
+      }
+      @keyframes leave {
+        0% {
+          transform: scale(1);
+          top: 50%;
+          left: 50%;
+          margin: -200px 0 0 -400px;
+        }
+        10% {
+          transform: scale(0.8);
+          top: 50%;
+          left: 50%;
+          margin: -200px 0 0 -400px;
+        }
+        100% {
+          transform: scale(0.5);
+          top: 50%;
+          left: -80%;
+        }
+      }
+
+      /*结束动画*/
+      #container #bye {
+        color: #ffffff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -55px;
+        opacity: 0;
+      }
+      #container .end {
+        animation: end 3s linear forwards;
+      }
+      @keyframes end {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="circle"></div>
+      <div class="enter" id="animation">
+        <div class="plane-wrapper">
+          <img
+            class="plane"
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/plane.svg"
+          />
+          <div class="rotate-container">
+            <img
+              class="propeller"
+              src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/propeller.svg"
+            />
+          </div>
+        </div>
+      </div>
+      <h1 id="bye">bye~~</h1>
+    </div>
+    <script type="application/javascript">
+      //判断浏览器类型
+      var client = (function () {
+        var engine = {
+          ie: 0,
+          gecko: 0,
+          webkit: 0,
+          khtml: 0,
+          opera: 0,
+          ver: null,
+        };
+        return {
+          engine: engine,
+        };
+      })();
+
+      var EventUtil = {
+        getEvent: function (event) {
+          return event ? event : window.event;
+        },
+        addHandler: function (element, type, handler) {
+          if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+          } else if (element.attachEvent) {
+            element.attachEvent("on" + type, handler);
+          } else {
+            element["on" + type] = handler;
+          }
+        },
+        getWheelDelta: function (event) {
+          var driect = null;
+          if (event.wheelDelta) {
+            driect =
+              client.engine.opera && client.engine.opera < 9.5
+                ? -event.wheelDelta
+                : event.wheelDelta;
+          } else {
+            driect = -event.detail * 40;
+          }
+          return driect > 0 ? 1 : -1;
+        },
+      };
+
+      // 添加滚轮事件
+      (function () {
+        function onmousewheel(event) {
+          var animation = document.getElementById("animation");
+          var bye = document.getElementById("bye");
+
+          var delta = EventUtil.getWheelDelta(EventUtil.getEvent(event));
+          if (delta < 0) {
+            animation.className = "leave";
+            bye.className = "end";
+          }
+
+          if (delta > 0) {
+            animation.className = "enter";
+            bye.className = "";
+          }
+        }
+        EventUtil.addHandler(document, "mousewheel", onmousewheel);
+      })();
+    </script>
+  </body>
+</html>

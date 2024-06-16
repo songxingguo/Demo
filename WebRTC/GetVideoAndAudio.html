@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>获取视频和音频</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Realtime communication with WebRTC</h1>
+      <video autoplay playsinline></video>
+    </div>
+    <script>
+      "use strict";
+
+      const mediaStreamContrains = {
+        video: true,
+      };
+
+      const localVideo = document.querySelector("video");
+
+      function gotLocalMediaStream(mediaStream) {
+        localVideo.srcObject = mediaStream;
+      }
+
+      function handleLocalMediaStreamError(error) {
+        console.log("navigator.getUserMedia error: ", error);
+      }
+
+      navigator.mediaDevices
+        .getUserMedia(mediaStreamContrains)
+        .then(gotLocalMediaStream)
+        .catch(handleLocalMediaStreamError);
+    </script>
+  </body>
+</html>

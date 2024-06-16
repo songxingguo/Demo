@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas绘制文本</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="200"></canvas>
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.font = "24px Arial";
+      ctx.fillStyle = "red";
+
+      const text = "Hello, 阿珊和她的猫!";
+      const x = 50;
+      const y = 100;
+
+      ctx.fillText(text, x, y);
+      // ctx.strokeText(text, x, y);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+body {
+  /* remove margins and scroll bars */
+  margin: 0;
+
+  /* style text */
+  text-align: center;
+  font-size: 12px;
+  font-family: Sans-Serif;
+
+  /* color text */
+  color: #444;
+}
+
+h1 {
+  width: 100%;
+  /* make sure that the heading is drawn on top */
+  z-index: 1;
+  margin: 20px 0 40px;
+}
+
+.scene-container {
+  display: grid;
+  justify-content: space-around;
+  grid-template-columns: repeat(auto-fill, 400px);
+  grid-gap: 10px;
+}
+
+.inline-scene {
+  display: flex;
+  color: silver;
+  position: relative;
+  border: 1px solid silver;
+  box-shadow: 1px 1px 10px 1px silver;
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+}
+
+.round {
+  border-radius: 50%;
+}

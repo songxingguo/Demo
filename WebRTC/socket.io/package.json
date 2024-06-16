@@ -1,0 +1,17 @@
+{
+  "name": "socketio-minimal-example",
+  "version": "0.0.1",
+  "description": "Minimal example to play with Socket.IO: https://socket.io/",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.mjs"
+  },
+  "author": "Damien Arrachequesne",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "socket.io": "^4.1.3"
+  },
+  "keywords": []
+}

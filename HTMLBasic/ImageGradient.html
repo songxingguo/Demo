@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <style type="text/css">
+      img {
+        width: 400px;
+        height: 400px;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <img
+      id="pic"
+      src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg"
+    />
+  </body>
+  <script type="text/javascript" src="../js/myQuery.js"></script>
+  <script type="text/javascript">
+    var aImg = [
+      "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg",
+      "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg",
+      "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture2.jpg",
+      "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg",
+    ];
+
+    var num = 0;
+
+    //		$('pic').onclick = function(){
+    //			//渐变消失
+    //			dispear($('pic'),-0.05, function(){
+    //				num++;
+    //				$('pic').src = aImg[num%4]; //0 ，1，2，3
+    //				//渐变显示
+    //				dispear($('pic'),0.05,function(){
+    //
+    //				});
+    //			});
+    //		}
+
+    setInterval(function () {
+      //渐变消失
+      dispear($("pic"), -0.05, function () {
+        num++;
+        $("pic").src = aImg[num % 4]; //0 ，1，2，3
+        //渐变显示
+        dispear($("pic"), 0.05, function () {});
+      });
+    }, 1000);
+  </script>
+</html>

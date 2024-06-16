@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IntersectionObserver实现懒加载 DEMO</title>
+  </head>
+  <style>
+    .img-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 50vh;
+      border: red 1px solid;
+      overflow: auto;
+    }
+  </style>
+  <body>
+    <div id="img-container" class="img-container">
+      <img
+        src="https://via.placeholder.com/210/fff"
+        data-src="http://g.hiphotos.baidu.com/image/pic/item/6d81800a19d8bc3e770bd00d868ba61ea9d345f2.jpg"
+        alt="美女图片"
+        width="50%"
+      />
+      <img
+        src="https://via.placeholder.com/210/fff"
+        data-src="http://g.hiphotos.baidu.com/image/pic/item/6d81800a19d8bc3e770bd00d868ba61ea9d345f2.jpg"
+        alt="美女图片"
+        width="50%"
+      />
+      <img
+        src="https://via.placeholder.com/210/fff"
+        data-src="https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg"
+        alt="朋克图片"
+        width="50%"
+      />
+    </div>
+    <script>
+      const imgContainer = document.getElementById("img-container");
+      let observer = new IntersectionObserver(
+        (entries) => {
+          console.log("交叉了");
+          console.log(entries);
+          for (const entrie of entries) {
+            if (entrie.isIntersecting) {
+              const img = entrie.target;
+              img.src = img.dataset.src;
+              observer.unobserve(img);
+            }
+          }
+        },
+        {
+          root: imgContainer, // 观察的目标元素
+          rootMargin: "20px 0px 0px 0px", // root元素的偏移量
+          threshold: 0.1, // 一个0~1之间的值，表示一个触发的阈值, 为0立即触发。
+        }
+      );
+      // 获取所有的图片元素
+      const imgs = document.querySelectorAll("img");
+      // 遍历这些元素
+      imgs.forEach((img) => {
+        // 用observe方法观察这些元素
+        observer.observe(img);
+      });
+    </script>
+  </body>
+</html>

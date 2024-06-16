@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>表单</title>
+		<style type="text/css">
+			.inputArea {
+				margin: 10px 0;
+				font-size: 14px;
+			}
+			
+			.inputArea label {
+				margin-right: 20px;
+			}
+			.text {
+				width: 150px;
+				height: 30px;
+			}
+			.select {
+				width: 80px;
+				height: 30px;
+			}
+			.textArea {
+				width: 200px;
+				height: 100px;
+				vertical-align: top;
+			}
+			.botton {
+				width: 100px;
+				height: 40px;
+				color: #fff;
+				background-color: #D753B8;
+				border: none;
+				text-align: center;
+				line-height: 40px;
+				font-size: 16px;
+			}
+			.ml50 {
+				margin-left: 50px;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root">
+			<form>
+			    <div class="inputArea">
+					<label for="file">头像</label>
+					<input type="file" />
+				</div>
+				<div class="inputArea">
+					<label for="name">昵称</label>
+					<input type="text" class="text"/>
+				</div>
+				<div class="inputArea">
+					<label for="edu">学历</label>
+					<select class="select">
+						<option>一年级</option>
+						<option>二年级</option>
+						<option>三 年级</option>
+					</select>
+				</div>
+				<div class="inputArea">
+					<label for="sex">性别</label>
+					<input type="radio" name="sex" />男
+					<input type="radio" name="sex" />女
+				</div>
+				<div class="inputArea">
+					<label for="hobby">爱好</label>
+					<input type="checkbox" />篮球
+					<input type="checkbox" />音乐
+					<input type="checkbox" />钢琴
+					<input type="checkbox" />吉他
+				</div>
+				<div class="inputArea">
+					<label for="autograph">签名</label>
+					<textarea class="textArea"></textarea>
+				</div>
+				
+				<input type="botton" class="botton ml50" value="保存">
+			</form>
+		</div>
+	</body>
+</html>

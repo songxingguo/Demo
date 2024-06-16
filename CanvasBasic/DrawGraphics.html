@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas绘制复杂图形</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+    <script type="module">
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      ctx.beginPath();
+      ctx.moveTo(200, 50);
+      ctx.lineTo(250, 150);
+      ctx.lineTo(350, 150);
+      ctx.lineTo(275, 215);
+      ctx.lineTo(325, 325);
+      ctx.lineTo(200, 260);
+      ctx.lineTo(75, 325);
+      ctx.lineTo(125, 215);
+      ctx.lineTo(50, 150);
+      ctx.lineTo(150, 150);
+      ctx.closePath();
+
+      ctx.fillStyle = "yellow";
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+
+      ctx.fill();
+      ctx.stroke();
+    </script>
+  </body>
+</html>

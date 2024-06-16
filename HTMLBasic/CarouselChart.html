@@ -1,0 +1,237 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>轮播图</title>
+    <style type="text/css">
+      * {
+        padding: 0px;
+        margin: 0px;
+        text-decoration: none;
+      }
+      #container {
+        width: 600px;
+        height: 400px;
+        overflow: hidden;
+        position: relative;
+        margin: 20px auto;
+      }
+      #list {
+        width: 4200px;
+        height: 400px;
+        position: absolute;
+        z-index: 1;
+      }
+      #list img {
+        width: 600px;
+        height: 300px;
+        float: left;
+      }
+      #dots {
+        position: absolute;
+        z-index: 2;
+        top: 65%;
+        left: 50%;
+        margin-left: -84px;
+      }
+      #dots li {
+        list-style: none;
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #d8d8d8;
+        margin: 0 10px;
+        cursor: pointer;
+      }
+      #dots .active {
+        background-color: orangered;
+      }
+      .arrow {
+        position: absolute;
+        cursor: pointer;
+        display: none;
+        width: 40px;
+        height: 40px;
+        z-index: 2;
+        background-color: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        top: 50%;
+        margin-top: -80px;
+      }
+      .arrow:hover {
+        background-color: rgba(0, 0, 0, 0.7);
+      }
+      #container:hover .arrow {
+        display: block;
+      }
+      #prev {
+        left: 20px;
+      }
+      #next {
+        right: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div id="list" style="left: -600px">
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture2.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg"
+        />
+        <img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg"
+        />
+      </div>
+      <ul id="dots">
+        <li index="1" class="active"></li>
+        <li index="2"></li>
+        <li index="3"></li>
+        <li index="4"></li>
+        <li index="5"></li>
+      </ul>
+      <a
+        ><img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/prev.png"
+          class="arrow"
+          id="prev"
+      /></a>
+      <a
+        ><img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/next.png"
+          class="arrow"
+          id="next"
+      /></a>
+    </div>
+
+    <script type="application/javascript">
+      var container = document.getElementById("container");
+      var list = document.getElementById("list");
+      var dots = document.getElementById("dots").getElementsByTagName("li");
+      var prev = document.getElementById("prev");
+      var next = document.getElementById("next");
+      var index = 1;
+      var animated = false; // 动画状态
+      var timer;
+
+      function showDot() {
+        for (var i = 0; i < dots.length; i++) {
+          if (dots[i].className == "active") {
+            dots[i].className = "";
+            break;
+          }
+        }
+        dots[index - 1].className = "active";
+      }
+
+      function animate(offset) {
+        animated = true;
+        var newLeft = parseInt(list.style.left) + offset;
+        var time = 300; // 位移总时间
+        var interval = 10; // 位移间隔时间
+        var speed = offset / (time / interval); // 每次位移量
+
+        function go() {
+          if (
+            (speed < 0 && parseInt(list.style.left) > newLeft) ||
+            (speed > 0 && parseInt(list.style.left) < newLeft)
+          ) {
+            list.style.left = parseInt(list.style.left) + speed + "px";
+            setTimeout(go, interval);
+          } else {
+            animated = false;
+            list.style.left = newLeft + "px";
+
+            // 无限切换实现
+            if (newLeft > -600) {
+              list.style.left = -3000 + "px";
+            }
+            if (newLeft < -3000) {
+              list.style.left = -600 + "px";
+            }
+          }
+        }
+        go();
+      }
+
+      // 自动播放动画
+      function play() {
+        // setInterval 会一直执行函数，而 setTimeout 只会执行一次
+        timer = setInterval(function () {
+          next.onclick();
+        }, 3000);
+      }
+
+      // 停止动画播放
+      function stop() {
+        clearInterval(timer);
+      }
+
+      // 向前翻页
+      prev.onclick = function () {
+        if (index == 1) {
+          index = 5;
+        } else {
+          index -= 1;
+        }
+
+        showDot();
+        if (!animated) {
+          animate(-600);
+        }
+      };
+
+      // 向后翻页
+      next.onclick = function () {
+        if (index == 5) {
+          index = 1;
+        } else {
+          index += 1;
+        }
+
+        showDot();
+
+        if (!animated) {
+          animate(600);
+        }
+      };
+
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].onclick = function () {
+          if (this.className == "active") {
+            return;
+          }
+
+          // 获取自定义属性
+          var myIndex = parseInt(this.getAttribute("index"));
+          var offset = -600 * (myIndex - index);
+          index = myIndex;
+          showDot();
+
+          if (!animated) {
+            animate(offset);
+          }
+        };
+      }
+
+      container.onmouseover = stop;
+      container.onmouseout = play;
+      play();
+    </script>
+  </body>
+</html>

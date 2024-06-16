@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ElementUI弹窗</title>
+    <!-- Import style -->
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css"
+    />
+    <!-- Import Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import component library -->
+    <script src="//cdn.jsdelivr.net/npm/element-plus"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script>
+      const { createApp, ref, reactive } = Vue;
+      const App = {
+        setup() {
+          import { useDialog } from "./useDialog";
+          const useDialogs = useDialog();
+          // 打开账单弹框
+          useDialogs.mounted({
+            component: `组件`,
+            dialogProps: {
+              title: "标题",
+              width: "960px",
+            },
+            childrenProps: {
+              note: "一些自定义传值字段",
+              onRemoves: () => {
+                useDialogs.unmount();
+              },
+              onHandleConfirm: async () => {
+                loading.value = true;
+                useDialogs.unmount();
+              },
+            },
+          });
+        },
+      };
+      const app = createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>

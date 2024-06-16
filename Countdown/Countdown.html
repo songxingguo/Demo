@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.development.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Countdown DEMO</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+      const App = (props) => {
+        const [count, setCount] = useState(100);
+        useEffect(() => {
+          setInterval(() => {
+            setCount(count - 1);
+          }, 1000);
+        }, [count]);
+        return (
+          <div>
+            <h1>{props.title}</h1>
+            <div>{count}</div>
+            <div>
+              <button>开始</button>
+              <button>结束</button>
+              <button>暂停</button>
+            </div>
+          </div>
+        );
+      };
+    </script>
+    <script type="text/babel">
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App title="Countdown" />);
+    </script>
+  </body>
+</html>

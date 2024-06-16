@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>改变文字大小</title>
+	    <style type="text/css">
+	    	#root {
+	    		width: 300px;
+	    		height: 400px;
+	    		border: 3px solid #333;
+	    		text-align: center;
+	    	}
+	    	.opArea {
+	    		margin-top: 150px;
+	    	}
+	    	.text {
+	    		margin-top: 30px;
+	    	}
+	    </style>
+	</head>
+	<body>
+		<div id="root">
+            <div class="opArea">
+	            <input type="button" id="add" value="+" />
+				<input type="button" id="sub" value="-" />
+            </div>
+            <p class="text">我是文字</p>
+		</div>
+		
+		<script type="application/javascript">
+			var addBtn = document.getElementById('add');
+			var subBtn = document.getElementById('sub');
+			var text = document.getElementsByClassName('text')[0];
+			
+			var size=15;//默认字体是15px
+			addBtn.onclick = function () {
+               if(size<=30){//设置最大字体是30px
+                 size+=2;//每次点击按钮字体增加2
+                 text.style.fontSize=size+'px';//+'px'为了浏览器兼容
+　　　　　　　　} else {
+	            alert('已经是最大字体！');
+              }
+			}
+			
+			subBtn.onclick = function () {
+			  if(size>=5){//设置最小字体为5px
+　　　　　　　　　　size-=2;//每次减2px
+　　　　　　　　　　text.style.fontSize=size+'px';　　
+             } else {
+             	alert('已经是最小字体！');
+             }
+			}
+		</script>
+	</body>
+</html>

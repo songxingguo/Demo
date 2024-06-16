@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ElementUI文件上传</title>
+    <!-- Import style -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/element-plus/dist/index.css"
+    />
+    <!-- Import Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import component library -->
+    <script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const { createApp, ref, reactive } = Vue;
+      const App = {
+        setup() {
+          const message = ref("点击上传");
+          const fileList = ref([]);
+          /**
+           * @description: 封装fetch
+           * @param {Object} FetchConfig fetch config
+           * @return {Promise} fetch result
+           */
+          const requestApi = ({ url, method = "GET", ...fetchProps }) => {
+            return (
+              fetch(url, {
+                method,
+                ...fetchProps,
+              })
+                //返回请求成功的结果
+                .then((res) => res && res.status === 200 && res.json())
+                .catch((err) => alert("未知错误"))
+                .then((res) => {
+                  return {
+                    ...res,
+                    url: "https://picsum.photos/536/354",
+                  };
+                })
+            );
+          };
+
+          /**
+           * @description: 文件上传 - 请求接口(这里使用的是Mock接口,随机返回success)
+           * @param {FormData} formData
+           * @return {*}
+           */
+          const handleUploadFile = (formData = {}) =>
+            requestApi({
+              url: `http://rap2api.taobao.org/app/mock/data/2079322`,
+              method: "POST",
+              body: formData,
+            });
+
+          const submitUpload = () => {
+            let formData = new FormData();
+            // Array.from() 将文件列表数据转换为可遍历数组
+            Array.from(fileList).forEach((item) =>
+              formData.append("uploadFile", item)
+            );
+            console.log(formData);
+            // 调用接口上传文件
+            handleUploadFile(formData)
+              .then((res) => {
+                if (res && res.success) {
+                  alert("上传成功");
+                } else {
+                  alert(res?.message || "上传失败");
+                }
+                console.log(res);
+              })
+              .catch((err) => alert("出错"));
+          };
+          const uploadChange = (file, files) => {
+            console.log("file", file, file.uid);
+            const uid = file.uid;
+            let formData = new FormData();
+            formData.append("uploadFile", file.raw);
+            console.log("formData", formData);
+            // 调用接口上传文件
+            handleUploadFile(formData)
+              .then((res) => {
+                const curIndex = _.findIndex(fileList.value, function (o) {
+                  return o.uid == uid;
+                });
+                if (res && res.success) {
+                  const curFile = fileList.value[curIndex];
+                  fileList.value.splice(curIndex, 1, { ...curFile, ...res });
+                  alert("上传成功");
+                } else {
+                  fileList.value.splice(curIndex, 1);
+                  alert(res?.message || "上传失败");
+                }
+                console.log("res", res);
+                console.log("fileList", fileList);
+              })
+              .catch((err) => {
+                console.log("err", err);
+                alert("出错");
+              });
+          };
+          const httpRequest = (options) => {
+            console.log("options", options);
+          };
+          const handlePreview = (file) => {
+            console.log(file);
+          };
+          return {
+            message,
+            submitUpload,
+            uploadChange,
+            handlePreview,
+            fileList,
+          };
+        },
+        template: `<el-upload
+        v-model:file-list="fileList"
+        :auto-upload="false"
+        :on-change="uploadChange"
+        :http-request="httpRequest"
+        :on-preview="handlePreview"
+        multiple
+        :limit="3"
+      >
+        <el-button type="primary">{{message}}</el-button>
+      </el-upload>
+      <el-button type="primary" @click="submitUpload">确 定</el-button>
+      <div v-for="item in fileList">
+        <el-image
+          style="width: 100px; height: 100px"
+          :src="item.url"
+          :zoom-rate="1.2"
+          :max-scale="7"
+          :min-scale="0.2"
+          :preview-src-list="fileList"
+          :initial-index="4"
+          fit="cover"
+        />
+      </div>`,
+      };
+      const app = createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>

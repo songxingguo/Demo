@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>3D盒子炸开练习</title>
+    <style type="text/css">
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #container {
+        width: 300px;
+        height: 300px;
+        position: relative;
+        transition: all 3s;
+        transform-style: preserve-3d;
+        perspective: 8000px;
+        margin: 200px auto;
+        transform-origin: center center 150px;
+        animation: autoRotate 5s linear infinite;
+      }
+      .big-box {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .big-box .side {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0.6;
+        z-index: 1;
+      }
+      .big-box .side img {
+        width: 100%;
+        height: 100%;
+      }
+      .sm-box {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        transform-style: preserve-3d;
+        perspective: 3000px;
+        transform: translateZ(100px);
+      }
+      .sm-box .side {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        background: url(https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg)
+          no-repeat;
+        background-size: 100% 100%;
+      }
+      .top {
+        transform-origin: top;
+        transform: rotateX(90deg);
+      }
+      .bottom {
+        transform-origin: bottom;
+        transform: rotateX(-90deg);
+      }
+      .left {
+        transform-origin: left;
+        transform: rotateY(-90deg);
+      }
+      .right {
+        transform-origin: right;
+        transform: rotateY(90deg);
+      }
+      .big-box .front {
+        transform: translateZ(300px);
+      }
+      .sm-box .front {
+        transform: translateZ(100px);
+      }
+      .back {
+        transform: tratranslateZ(0);
+      }
+      #container:hover {
+        transform: rotateX(180deg) rotateY(360deg);
+      }
+      #container:hover .big-box .top {
+        transform: translateY(-100px) rotateX(90deg);
+      }
+      #container:hover .big-box .bottom {
+        transform: translateY(100px) rotateX(-90deg);
+      }
+      #container:hover .big-box .left {
+        transform: translateX(-100px) rotateY(-90deg);
+      }
+      #container:hover .big-box .right {
+        transform: translateX(100px) rotateY(90deg);
+      }
+      #container:hover .big-box .front {
+        transform: translateZ(400px);
+      }
+      #container:hover .big-box .back {
+        transform: translateZ(-100px);
+      }
+      @keyframes autoRotate {
+        from {
+          transform: rotateX(0) rotateY(0);
+        }
+        to {
+          transform: rotateX(360deg) rotateY(-360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container">
+      <div class="big-box">
+        <div class="side top">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic1.png"
+          />
+        </div>
+        <div class="side bottom">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic2.png"
+          />
+        </div>
+        <div class="side left">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic3.png"
+          />
+        </div>
+        <div class="side right">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic4.png"
+          />
+        </div>
+        <div class="side front">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic5.png"
+          />
+        </div>
+        <div class="side back">
+          <img
+            src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/pic6.png"
+          />
+        </div>
+      </div>
+      <div class="sm-box">
+        <div class="side top"></div>
+        <div class="side bottom"></div>
+        <div class="side left"></div>
+        <div class="side right"></div>
+        <div class="side front"></div>
+        <div class="side back"></div>
+      </div>
+    </div>
+  </body>
+</html>

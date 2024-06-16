@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>幻灯片</title>
+    <style type="text/css">
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      .container {
+        position: relative;
+        width: 500px;
+        margin: 20px auto;
+      }
+      #pre {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: #d8d8d8;
+        opacity: 0.5;
+        left: 10px;
+        top: 50%;
+        margin-top: -20px;
+        cursor: pointer;
+      }
+      #next {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: #d8d8d8;
+        opacity: 0.5;
+        right: 10px;
+        top: 50%;
+        margin-top: -20px;
+        cursor: pointer;
+      }
+      li {
+        list-style: none;
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: #d8d8d8;
+        margin: 0 10px;
+      }
+      .active {
+        background-color: red;
+      }
+      .pointArea {
+        position: absolute;
+        top: 90%;
+        left: 50%;
+        margin-left: -60px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img
+        src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg"
+        id="img"
+        width="500px"
+        height="300px"
+      />
+      <a
+        ><img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/prev.png"
+          id="pre"
+          width="40px"
+          height="40px"
+      /></a>
+      <a
+        ><img
+          src="https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/next.png"
+          id="next"
+          width="40px"
+          height="40px"
+      /></a>
+      <ul class="pointArea">
+        <li class="active"></li>
+        <li></li>
+        <li></li>
+        <li></li>
+      </ul>
+    </div>
+
+    <script type="application/javascript">
+      // 点击图片切换图片
+      var images = [
+        "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg",
+        "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg",
+        "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture2.jpg",
+        "https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/picture1.jpg",
+      ];
+
+      // 点击图片切换
+      var img = document.getElementById("img"),
+        length = images.length;
+      var num = 0;
+      img.onclick = function () {
+        num = num >= 3 ? 0 : num + 1;
+        img.src = images[num];
+        activePoint(lis[num]);
+      };
+
+      var lis = document.getElementsByTagName("li"),
+        liLength = lis.length;
+
+      // 点击圆点事件
+      for (var i = 0; i < liLength; i++) {
+        lis[i].index = i;
+        lis[i].onclick = function () {
+          activePoint(this);
+          num = this.index;
+          img.src = images[num];
+        };
+      }
+
+      // 选中圆点
+      var activePoint = function (obj) {
+        for (var j = 0; j < liLength; j++) {
+          lis[j].className = "";
+        }
+
+        obj.className = "active";
+      };
+
+      // 前一张
+      var pre = document.getElementById("pre");
+      pre.onclick = function () {
+        num = num <= 0 ? 3 : num - 1;
+        img.src = images[num];
+        activePoint(lis[num]);
+      };
+
+      // 后一张
+      var next = document.getElementById("next");
+      next.onclick = function () {
+        num = num >= 3 ? 0 : num + 1;
+        img.src = images[num];
+        activePoint(lis[num]);
+      };
+    </script>
+  </body>
+</html>

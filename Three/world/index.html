@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Three.js 世界</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8" />
+
+    <link
+      rel="icon"
+      href="https://discoverthreejs.com/favicon.ico"
+      type="image/x-icon"
+    />
+
+    <link href="./styles/main.css" rel="stylesheet" type="text/css" />
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.138.0/build/three.module.js",
+          "OrbitControls": "https://unpkg.com/three@0.138.0/examples/jsm/controls/OrbitControls.js",
+          "GLTFLoader": "https://cdn.skypack.dev/three@0.138.0/examples/jsm/loaders/GLTFLoader"
+        }
+      }
+    </script>
+    <script type="module" src="./src/main.js"></script>
+  </head>
+
+  <body>
+    <h1>Three.js 进阶DEMO 展示</h1>
+    <div class="scene-container">
+      <div
+        id="cube-container"
+        class="inline-scene loading-dots round"
+        style="touch-action: none"
+      ></div>
+      <div
+        id="ball-container"
+        class="inline-scene loading-dots round"
+        style="touch-action: none"
+      ></div>
+      <div
+        id="train-container"
+        class="inline-scene loading-dots round"
+        style="touch-action: none"
+      ></div>
+      <div
+        id="birds-container"
+        class="inline-scene loading-dots round"
+        style="touch-action: none"
+      ></div>
+    </div>
+  </body>
+</html>

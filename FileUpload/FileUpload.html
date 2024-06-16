@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>原生文件上传</title>
+    <style>
+      html,
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+      }
+
+      button {
+        outline: none;
+        border: none;
+        border-radius: 2px;
+        border-top-right-radius: 5px;
+        border-bottom-left-radius: 5px;
+      }
+
+      button:hover {
+        cursor: pointer;
+        box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.2);
+      }
+
+      #input-uploader {
+        display: none;
+      }
+
+      .wrapper {
+        border: 0.5px solid rgba(200, 200, 200, 0.1);
+        padding: 20px;
+        max-width: 1000px;
+        text-align: center;
+        margin: 100px auto;
+        border-radius: 10px;
+      }
+
+      .primary-button {
+        font-size: 1rem;
+        color: #fefefe;
+        background-color: rgb(117, 183, 245);
+        border: none;
+        border: 0.2px solid #7cd5f8;
+        background-image: linear-gradient(
+          45deg,
+          rgba(117, 183, 245, 1),
+          rgba(124, 213, 248, 1)
+        );
+        /* border-radius: 5px; */
+        outline: none;
+        padding: 2px 10px;
+        transition: all 0.2s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <form id="formData" onsubmit="return false;">
+        <input
+          type="file"
+          webkitdirectory
+          id="input-uploader"
+          name="fileUpload"
+          onchange="handleFileChange(this)"
+        />
+        <button class="primary-button button-upload" onclick="showUploader()">
+          上传文件夹
+        </button>
+      </form>
+    </div>
+    <script>
+      /**
+       * 原生JS文件上传
+       * 1.不使用<form>
+       * 不使用form标签, 在提交的时候手动获取 input[type='file'] 的 files 文件列表,
+       * 进行手动处理数据:
+       * files = document.getElementById("input-upload").files 获取文件列表
+       * let formData =new FormData()
+       * formData.append("file", files[0])
+       *
+       *
+       * 2.使用<form>
+       * 使用form的时候一般不用form原生的提交方式,可以为form添加 οnsubmit="return false"来阻止默认的提交事件
+       * ▲ 使用form的优点
+       * 可以使用 new FormData(document.getElementById("formID"))来获取整个表单的数据
+       *
+       * 注意点:
+       * 使用fetch()的时候`不`应该单独设置 headers:{"Content-Type":"multipart/form-data"}
+       */
+
+      /**
+       * @description: 封装fetch
+       * @param {Object} FetchConfig fetch config
+       * @return {Promise} fetch result
+       */
+      const requestApi = ({ url, method = "GET", ...fetchProps }) => {
+        return (
+          fetch(url, {
+            method,
+            ...fetchProps,
+          })
+            //返回请求成功的结果
+            .then((res) => res && res.status === 200 && res.json())
+            .catch((err) => alert("未知错误"))
+            .then((res) => res)
+        );
+      };
+
+      /**
+       * @description: 打开文件选择窗口(自定义上传控件样式,必须手动点击原Input控件打开上传窗口)
+       * @param {*}
+       * @return {*}
+       */
+      const showUploader = () => {
+        let uploaderInput = document.getElementById("input-uploader");
+        uploaderInput.click();
+      };
+
+      /**
+       * @description: 选择文件后的处理
+       * @param {*}
+       * @return {*}
+       */
+      function handleFileChange() {
+        let fileData = document.getElementById("input-uploader");
+        const { files, value, form } = fileData;
+        let formData = new FormData();
+        // Array.from() 将文件列表数据转换为可遍历数组
+        Array.from(files).forEach((item) =>
+          formData.append("uploadFile", item)
+        );
+        console.log(formData);
+        // 调用接口上传文件
+        handleUploadFile(formData)
+          .then((res) => {
+            if (res && res.success) {
+              alert("上传成功");
+              //处理结果
+            } else {
+              alert(res?.message || "上传失败");
+            }
+            console.log(res);
+          })
+          .catch((err) => alert("出错"));
+      }
+      /**
+       * @description: 文件上传 - 请求接口(这里使用的是Mock接口,随机返回success)
+       * @param {FormData} formData
+       * @return {*}
+       */
+      const handleUploadFile = (formData = {}) =>
+        requestApi({
+          url: `http://rap2api.taobao.org/app/mock/data/2079322`,
+          method: "POST",
+          body: formData,
+        });
+    </script>
+  </body>
+</html>

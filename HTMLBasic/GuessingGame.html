@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>猜图游戏</title>
+    <style type="text/css">
+      #container {
+        width: 510px;
+        height: 510px;
+        background: url(https://raw.githubusercontent.com/songxingguo/brain/main/src/.vuepress/public/demo/img/jd.jpg)
+          no-repeat;
+        background-size: 100% 100%;
+        position: relative;
+        margin: 20px auto;
+      }
+      .item {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border-right: 1px solid #d8d8d8;
+        border-bottom: 1px solid #d8d8d8;
+        background-color: #d8d8d8;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+
+    <script type="application/javascript">
+      var cont = document.getElementById("container");
+
+      for (var i = 0; i <= 9; i++) {
+        for (var j = 0; j <= 9; j++) {
+          cont.innerHTML +=
+            '<div class="item" style="top:' +
+            i * 51 +
+            "px; left:" +
+            j * 51 +
+            'px;"></div>';
+        }
+      }
+
+      var items = document.getElementsByClassName("item");
+      for (var i = 0; i < items.length; i++) {
+        items[i].onmouseover = function () {
+          this.style.backgroundColor = "rgba(0, 0, 0, 0)";
+        };
+      }
+    </script>
+  </body>
+</html>

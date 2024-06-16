@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>大文件分片上传</title>
+    <script src="https://cdn.jsdelivr.net/npm/spark-md5@3.0.2/spark-md5.min.js"></script>
+  </head>
+  <body>
+    <div>
+      <input type="file" name="file" id="file" multiple />
+      <button id="upload" onClick="handleUpload()">上传</button>
+      <button id="pause" onClick="handlePause()" style="display: none">
+        暂停
+      </button>
+      <button id="resume" onClick="handleResume()" style="display: none">
+        恢复
+      </button>
+      <p id="total-slice"></p>
+      <p id="hash-progress"></p>
+      <p id="progress"></p>
+    </div>
+    <script>
+      let fileName = "",
+        fileHash = "",
+        fileSize = 0,
+        fileChunkListData = [],
+        abortControllerList = [];
+      const HOST = "http://localhost:3000";
+      // 切换按钮状态
+      const toggleBtn = (isPause = true) => {
+        const pauseBtn = document.getElementById("pause");
+        const resuemeBtn = document.getElementById("resume");
+        if (isPause) {
+          pauseBtn.style.display = "inline-block";
+          resuemeBtn.style.display = "none";
+        } else {
+          pauseBtn.style.display = "none";
+          resuemeBtn.style.display = "inline-block";
+        }
+      };
+      /**
+       * @description: 封装fetch
+       * @param {Object} FetchConfig fetch config
+       * @return {Promise} fetch result
+       */
+      const requestApi = ({
+        url,
+        method = "GET",
+        onProgress,
+        ...fetchProps
+      }) => {
+        const controller = new AbortController();
+        abortControllerList.push(controller);
+        return new Promise(async (resolve, reject) => {
+          const res = await fetch(url, {
+            method,
+            ...fetchProps,
+            signal: controller.signal,
+          });
+          const total = res.headers.get("content-length");
+          const reader = res.body.getReader(); //创建可读流
+          const decoder = new TextDecoder();
+          let loaded = 0;
+          let data = "";
+          while (true) {
+            const { done, value } = await reader.read();
+            loaded += value?.length || 0;
+            data += decoder.decode(value);
+            onProgress && onProgress({ loaded, total });
+            if (done) {
+              break;
+            }
+          }
+          // 将请求成功的 xhr 从列表中删除
+          const aCIndex = abortControllerList.findIndex(
+            (c) => c.signal === controller.signal
+          );
+          abortControllerList.splice(aCIndex, 1);
+          resolve(JSON.parse(data));
+        });
+      };
+
+      // 文件分片
+      const createFileChunk = (file) => {
+        const chunkList = [];
+        //计算文件切片总数
+        const sliceSize = 5 * 1024 * 1024; // 每个文件切片大小定为5MB
+        const totalSlice = Math.ceil(fileSize / sliceSize);
+        for (let i = 1; i <= totalSlice; i++) {
+          let chunk;
+          if (i == totalSlice) {
+            // 最后一片
+            chunk = file.slice((i - 1) * sliceSize, fileSize - 1); //切割文件
+          } else {
+            chunk = file.slice((i - 1) * sliceSize, i * sliceSize);
+          }
+          chunkList.push({
+            file: chunk,
+            fileSize,
+            size: Math.min(sliceSize, file.size),
+          });
+        }
+        const sliceText = `一共分片：${totalSlice}`;
+        document.getElementById("total-slice").innerHTML = sliceText;
+        console.log(sliceText);
+        return chunkList;
+      };
+
+      // 根据分片生成hash
+      const calculateHash = (fileChunkList) => {
+        return new Promise((resolve) => {
+          const spark = new SparkMD5.ArrayBuffer();
+          let count = 0;
+          // 计算出hash
+          const loadNext = (index) => {
+            const reader = new FileReader(); // 文件阅读对象
+            reader.readAsArrayBuffer(fileChunkList[index].file);
+            reader.onload = (e) => {
+              count++;
+              spark.append(e.target.result);
+              if (count === fileChunkList.length) {
+                resolve(spark.end());
+              } else {
+                // 还没读完
+                const percentage = parseInt(
+                  ((count + 1) / fileChunkList.length) * 100
+                );
+                const progressText = `计算hash值：${percentage}%`;
+                document.getElementById("hash-progress").innerHTML =
+                  progressText;
+                console.log(progressText);
+                loadNext(count);
+              }
+            };
+          };
+          loadNext(0);
+        });
+      };
+
+      const handleUpload = async () => {
+        const file = document.getElementById("file").files[0];
+        if (!file) return alert("请选择文件！");
+        fileName = file.name; // 文件名
+        fileSize = file.size; // 文件大小
+        const fileChunkList = createFileChunk(file);
+        fileHash = await calculateHash(fileChunkList); // 文件hash
+        const { shouldUpload, uploadedList } = await verifyUpload(
+          fileName,
+          fileHash
+        );
+        if (!shouldUpload) {
+          alert("秒传：上传成功");
+          return;
+        }
+        fileChunkListData = fileChunkList.map(({ file, size }, index) => {
+          const hash = `${fileHash}-${index}`;
+          return {
+            file,
+            size,
+            fileName,
+            fileHash,
+            hash,
+            percentage: uploadedList.includes(hash) ? 100 : 0,
+          };
+        });
+        toggleBtn();
+        await uploadChunks(uploadedList);
+      };
+
+      //上传分片
+      const uploadChunks = async (uploadedList) => {
+        const requestList = fileChunkListData
+          .filter(({ hash }) => !uploadedList.includes(hash))
+          .map(({ file, fileHash, fileName, hash }, index) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("fileHash", fileHash);
+            formData.append("name", fileName);
+            formData.append("hash", hash);
+            return { formData, hash };
+          })
+          .map(async ({ formData, hash }) => {
+            return requestApi({
+              url: `${HOST}`,
+              method: "POST",
+              body: formData,
+              onProgress: ({ loaded, total }) => {
+                const percentage = parseInt((loaded / total) * 100);
+                // console.log("分片上传百分比：", percentage);
+                const curIndex = fileChunkListData.findIndex(
+                  ({ hash: h }) => h === hash
+                );
+                fileChunkListData[curIndex].percentage = percentage;
+                const totalLoaded = fileChunkListData
+                  .map((item) => item.size * item.percentage)
+                  .reduce((acc, cur) => acc + cur);
+                const totalPercentage = parseInt(
+                  (totalLoaded / fileSize).toFixed(2)
+                );
+                const progressText = `上传进度：${totalPercentage}%`;
+                document.getElementById("progress").innerHTML = progressText;
+                console.log(progressText);
+              },
+            });
+          });
+        await Promise.all(requestList);
+        // 之前上传的切片数量 + 本次上传的切片数量 = 所有切片数量时
+        //合并分片
+        if (
+          uploadedList.length + requestList.length ===
+          fileChunkListData.length
+        ) {
+          await mergeRequest(fileName, fileHash);
+        }
+      };
+
+      // 合并分片
+      const mergeRequest = async (fileName, fileHash) => {
+        await requestApi({
+          url: `${HOST}/merge`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            filename: fileName,
+            fileHash,
+          }),
+        });
+      };
+
+      //文件秒传
+      const verifyUpload = async (filename, fileHash) => {
+        const data = await requestApi({
+          url: `${HOST}/verify`,
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+          },
+          body: JSON.stringify({
+            filename,
+            fileHash,
+          }),
+        });
+        return data;
+      };
+      //暂停
+      const handlePause = () => {
+        toggleBtn(false);
+        abortControllerList.forEach((controller) => controller?.abort());
+        abortControllerList = [];
+      };
+      // 恢复
+      const handleResume = async () => {
+        toggleBtn();
+        const { uploadedList } = await verifyUpload(fileName, fileHash);
+        await uploadChunks(uploadedList);
+      };
+    </script>
+  </body>
+</html>

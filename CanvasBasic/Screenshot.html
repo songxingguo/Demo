@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <title>上传视频，进行预览，截取图片，并且获取时长</title>
+  </head>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+  <body>
+    <div>
+      <video
+        id="myVideo"
+        width="400px"
+        height="auto"
+        autoplay="autoplay"
+        muted
+        controls
+        crossorigin="anonymous"
+      >
+        <source
+          src="https://lf3-static.bytednsdoc.com/obj/eden-cn/nupenuvpxnuvo/xgplayer_doc/xgplayer-demo.mp4"
+        />
+        您的浏览器不支持 HTML5 video 元素。
+      </video>
+      <input type="file" onchange="changFile(this)" />
+    </div>
+    <div>
+      <img id="image" />
+    </div>
+    <div><button onclick="manualCapture()">点击截图</button><br /></div>
+
+    <script>
+      function changFile(ele) {
+        const videoFile = ele.files[0];
+        const url = URL.createObjectURL(videoFile);
+        console.log("视频地址:", url);
+        const video = document.getElementById("myVideo");
+        video.src = url;
+      }
+
+      function manualCapture() {
+        const video = document.getElementById("myVideo");
+        const canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        const ratio = window.devicePixelRatio || 1;
+        ctx.scale(ratio, ratio);
+        canvas.width = video.offsetWidth * ratio;
+        canvas.height = video.offsetHeight * ratio;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const img = document.getElementById("image");
+        console.log("图片地址", canvas.toDataURL("image/jpg"));
+        img.src = canvas.toDataURL("image/jpg");
+      }
+    </script>
+  </body>
+</html>

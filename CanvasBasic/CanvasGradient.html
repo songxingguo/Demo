@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas渐变填充或描边</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="300"></canvas>
+    <script type="module">
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      // 创建线性渐变对象
+      const gradient = ctx.createLinearGradient(0, 0, 400, 0);
+
+      // 添加颜色停止点
+      gradient.addColorStop(0, "red");
+      gradient.addColorStop(0.5, "yellow");
+      gradient.addColorStop(1, "blue");
+
+      // 应用渐变样式
+      ctx.fillStyle = gradient;
+
+      // 绘制矩形
+      ctx.fillRect(50, 50, 300, 150);
+    </script>
+  </body>
+</html>

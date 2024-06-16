@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Canvas绘制图像</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="300"></canvas>
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const image = new Image();
+      image.src = "https://picsum.photos/536/354"; // 替换为实际图像的路径
+
+      image.onload = function () {
+        const x = 50; // 图像的x坐标
+        const y = 50; // 图像的y坐标
+        const width = 250; // 图像的宽度
+        const height = 200; // 图像的高度
+
+        ctx.drawImage(image, x, y, width, height);
+      };
+    </script>
+  </body>
+</html>

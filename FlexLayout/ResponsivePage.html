@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <meta charset="utf-8" name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+ <style>
+    * {
+    	text-align: center;
+    }
+	.flex-container {
+	    display: -webkit-flex;
+	    display: flex;  
+	    -webkit-flex-flow: row wrap;
+	    flex-flow: row wrap;
+	    font-weight: bold;
+	    text-align: center;
+	}
+	
+	.flex-container > * {
+	    padding: 10px;
+	    flex: 1 100%;
+	}
+	
+	.main {
+	    text-align: left;
+	    background: cornflowerblue;
+	}
+	
+	.header {background: coral;}
+	.footer {background: lightgreen;}
+	.aside1 {background: moccasin;}
+	.aside2 {background: violet;}
+	
+	@media all and (min-width: 600px) {
+	    .aside { flex: 1 auto; }
+	}
+	
+	@media all and (min-width: 800px) {
+	    .main    { flex: 3 0px; }
+	    .aside1 { order: 1; } 
+	    .main    { order: 2; }
+	    .aside2 { order: 3; }
+	    .footer  { order: 4; }
+	}
+ </style>
+</head>
+<body>
+	<div class="flex-container">
+	  <header class="header">头部</header>
+	  <article class="main">
+	    <p>内容</p>
+	  </article>
+	  <aside class="aside aside1">边栏 1</aside>
+	  <aside class="aside aside2">边栏 2</aside>
+	  <footer class="footer">底部</footer>
+	</div>
+</body>
+</html>
