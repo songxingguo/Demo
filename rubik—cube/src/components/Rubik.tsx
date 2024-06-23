@@ -59,7 +59,7 @@ export default function Rubik() {
         let cubes = getPlaneCubes(startCube, direction);
         const startstamp = Date.now();
         requestAnimationFrame((timestamp) => {
-          rotateAnimation(cubes, direction, timestamp, 0);
+          rotateAnimation(cubes, direction, timestamp, 0, 0);
         });
       }
     }
@@ -95,7 +95,7 @@ export default function Rubik() {
     let intersect, normalize;
     if (intersects.length) {
       try {
-        if (intersects[0].object.type === "coverCube") {
+        if (intersects[0].object?.name === "coverCube") {
           intersect = intersects[1];
           normalize = intersects[0].face?.normal;
         } else {
@@ -113,6 +113,7 @@ export default function Rubik() {
    * 根据立方体和旋转方向，找到同一平面上的所有立方体
    */
   function getPlaneCubes(cube: any, direction: any) {
+    const cubes = scene.children;
     let results = [];
     let orientation = direction % 10;
     switch (orientation) {
@@ -403,6 +404,8 @@ export default function Rubik() {
           <mesh
             position={[position.x, position.y, position.z]}
             material={materials}
+            key={`${i}-${j}`}
+            name="coverCube"
           >
             <boxGeometry
               args={[BasicParams.len, BasicParams.len, BasicParams.len]}
