@@ -89,6 +89,9 @@ export default function Rubik() {
       <mesh
         position={[item.position.x, item.position.y, item.position.z]}
         material={materials}
+        onPointerUp={(e) => console.log("up", e)}
+        onPointerDown={(e) => console.log("down", e)}
+        onPointerMove={(e) => console.log("move", e)}
       >
         <boxGeometry
           args={[BasicParams.len, BasicParams.len, BasicParams.len]}
