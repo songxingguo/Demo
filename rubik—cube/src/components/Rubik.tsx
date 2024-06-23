@@ -38,6 +38,7 @@ export default function Rubik() {
     // 找到
     const value = getIntersectAndNormalize(event);
     normalize = value.normalize;
+    console.log("startMouse");
     // 魔方没有处于转动过程中且存在碰撞物体
     if (!isRotating && value.intersect) {
       // controller.enabled = false; // 当刚开始的接触点在魔方上时操作为转动魔方，屏蔽控制器转动
@@ -52,12 +53,12 @@ export default function Rubik() {
     const value = getIntersectAndNormalize(event);
     if (!isRotating && value.intersect && startPoint) {
       const movePoint = value.intersect.point;
+      console.log("moveMouse");
       if (!movePoint.equals(startPoint)) {
         isRotating = true;
         let vector = movePoint.sub(startPoint);
         let direction = getDirection(vector);
         let cubes = getPlaneCubes(startCube, direction);
-        const startstamp = Date.now();
         requestAnimationFrame((timestamp) => {
           rotateAnimation(cubes, direction, timestamp, 0, 0);
         });
@@ -66,11 +67,27 @@ export default function Rubik() {
   }
 
   function stopMouse(event: any) {
+    console.log("stopMouse");
     startCube = null;
     startPoint = null;
     isRotating = false;
     // controller.enabled = true;
   }
+
+  function setupRubiks() {
+    // 透明正方体
+    const size = BasicParams.len * BasicParams.num;
+    let box = new THREE.BoxGeometry(size, size, size);
+    let mesh = new THREE.MeshBasicMaterial({
+      // vertexColors: THREE.FaceColors,
+      opacity: 0,
+      transparent: true,
+    });
+    const rubiks = new THREE.Mesh(box, mesh);
+    rubiks.name = "coverCube";
+    scene.add(rubiks);
+  }
+  setupRubiks();
 
   /**
    * 获取操作焦点以及该焦点所在平面的法向量
@@ -91,7 +108,7 @@ export default function Rubik() {
     const raycaster = new THREE.Raycaster();
     raycaster.setFromCamera(mouse, camera);
     // Raycaster方式定位选取元素，可能会选取多个，以第一个为准
-    const intersects = raycaster.intersectObjects(scene.children) || [];
+    const intersects = raycaster.intersectObjects(scene.children);
     let intersect, normalize;
     if (intersects.length) {
       try {
@@ -122,7 +139,7 @@ export default function Rubik() {
         // 绕x轴
         for (let i = 0; i < cubes.length; i++) {
           let curr = cubes[i];
-          console.log(curr.position);
+          // console.log("绕x轴", curr.position, cube.position);
           if (Math.abs(curr.position.x - cube.position.x) < 0.2) {
             results.push(curr);
           }
@@ -133,7 +150,7 @@ export default function Rubik() {
         // 绕y轴
         for (let i = 0; i < cubes.length; i++) {
           let curr = cubes[i];
-          console.log(curr.position);
+          // console.log("绕y轴", curr.position, cube.position);
           if (Math.abs(curr.position.y - cube.position.y) < 0.2) {
             results.push(curr);
           }
@@ -144,7 +161,7 @@ export default function Rubik() {
         // 绕z轴
         for (let i = 0; i < cubes.length; i++) {
           let curr = cubes[i];
-          console.log(curr.position);
+          // console.log("绕z轴", curr.position, cube.position);
           if (Math.abs(curr.position.z - cube.position.z) < 0.2) {
             results.push(curr);
           }
@@ -405,7 +422,6 @@ export default function Rubik() {
             position={[position.x, position.y, position.z]}
             material={materials}
             key={`${i}-${j}`}
-            name="coverCube"
           >
             <boxGeometry
               args={[BasicParams.len, BasicParams.len, BasicParams.len]}

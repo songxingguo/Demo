@@ -8,8 +8,8 @@ function App() {
     <>
       <Canvas>
         <Rubik />
-        <OrbitControls />
-        <axesHelper args={[5]} />
+        {/* <OrbitControls /> */}
+        {/* <axesHelper args={[5]} /> */}
       </Canvas>
     </>
   );
