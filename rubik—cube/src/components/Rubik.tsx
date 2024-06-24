@@ -38,7 +38,6 @@ export default function Rubik() {
     // 找到
     const value = getIntersectAndNormalize(event);
     normalize = value.normalize;
-    console.log("startMouse");
     // 魔方没有处于转动过程中且存在碰撞物体
     if (!isRotating && value.intersect) {
       // controller.enabled = false; // 当刚开始的接触点在魔方上时操作为转动魔方，屏蔽控制器转动
@@ -53,7 +52,6 @@ export default function Rubik() {
     const value = getIntersectAndNormalize(event);
     if (!isRotating && value.intersect && startPoint) {
       const movePoint = value.intersect.point;
-      console.log("moveMouse");
       if (!movePoint.equals(startPoint)) {
         isRotating = true;
         let vector = movePoint.sub(startPoint);
@@ -67,7 +65,6 @@ export default function Rubik() {
   }
 
   function stopMouse(event: any) {
-    console.log("stopMouse");
     startCube = null;
     startPoint = null;
     isRotating = false;
@@ -291,36 +288,27 @@ export default function Rubik() {
       startPoint = null;
     }
     let orientation = direction % 10;
-    let radians = orientation % 2 == 1 ? -90 : 90;
+    let radians = orientation % 2 == 1 ? -90 : 90; // 正/反转
+    const rotationRatio = (currentstamp - laststamp) / rotateDuration; //旋转比率
+    const tRotationAngle = (radians * Math.PI) / 180; //总旋转角度
+    const rotationAngle = tRotationAngle * rotationRatio; // 每次旋转角度
     switch (orientation) {
       case 1:
       case 2:
         for (let i = 0; i < cubes.length; i++) {
-          rotateAroundWorldX(
-            cubes[i],
-            (((radians * Math.PI) / 180) * (currentstamp - laststamp)) /
-              rotateDuration
-          );
+          rotateAroundWorldX(cubes[i], rotationAngle);
         }
         break;
       case 3:
       case 4:
         for (let i = 0; i < cubes.length; i++) {
-          rotateAroundWorldY(
-            cubes[i],
-            (((radians * Math.PI) / 180) * (currentstamp - laststamp)) /
-              rotateDuration
-          );
+          rotateAroundWorldY(cubes[i], rotationAngle);
         }
         break;
       case 5:
       case 6:
         for (let i = 0; i < cubes.length; i++) {
-          rotateAroundWorldZ(
-            cubes[i],
-            (((radians * Math.PI) / 180) * (currentstamp - laststamp)) /
-              rotateDuration
-          );
+          rotateAroundWorldZ(cubes[i], rotationAngle);
         }
         break;
     }
