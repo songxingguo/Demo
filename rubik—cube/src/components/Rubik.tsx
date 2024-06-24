@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { useThree } from "@react-three/fiber";
+import { useEffect } from "react";
 
 //基础模型参数
 const BasicParams = {
@@ -32,7 +33,6 @@ export default function Rubik() {
     window.addEventListener("touchmove", moveMouse);
     window.addEventListener("touchend", stopMouse);
   };
-  setupEvents();
 
   /**
    * 魔方控制方法
@@ -79,15 +79,19 @@ export default function Rubik() {
     const size = BasicParams.len * BasicParams.num;
     let box = new THREE.BoxGeometry(size, size, size);
     let mesh = new THREE.MeshBasicMaterial({
-      // vertexColors: THREE.FaceColors,
       opacity: 0,
       transparent: true,
     });
     const rubiks = new THREE.Mesh(box, mesh);
     rubiks.name = "coverCube";
     scene.add(rubiks);
+    console.log("coverCube");
   }
-  setupRubiks();
+
+  useEffect(() => {
+    setupEvents();
+    setupRubiks();
+  }, []); // 不会再次运行（开发环境下除外）
 
   /**
    * 获取操作焦点以及该焦点所在平面的法向量
