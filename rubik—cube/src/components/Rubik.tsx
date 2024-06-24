@@ -115,6 +115,7 @@ export default function Rubik() {
     }
     console.log("normalize", normalize);
     return { intersect: intersect, normalize: normalize };
+    return { intersect: intersect, normalize: normalize?.round() };
   }
 
   /**
