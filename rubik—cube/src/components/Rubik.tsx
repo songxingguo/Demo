@@ -13,6 +13,9 @@ const BasicParams = {
 };
 export default function Rubik() {
   const { camera, scene } = useThree();
+  camera.position.set(3, 1, 3);
+  camera.up.set(0, 1, 0); //正方向
+  camera.lookAt(0, 0, 0);
 
   let isRotating = false; // 是否在旋转
   let startCube: any; // 焦点立方体
