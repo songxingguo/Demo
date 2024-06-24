@@ -14,7 +14,7 @@ const BasicParams = {
 };
 export default function Rubik() {
   const { camera, scene } = useThree();
-  camera.position.set(3, 1, 3);
+  camera.position.set(4, 2, 4);
   camera.up.set(0, 1, 0); //正方向
   camera.lookAt(0, 0, 0);
 
@@ -59,6 +59,7 @@ export default function Rubik() {
         isRotating = true;
         let vector = movePoint.sub(startPoint);
         let direction = getDirection(vector);
+        console.log("direction", direction);
         let cubes = getPlaneCubes(startCube, direction);
         requestAnimationFrame((timestamp) => {
           rotateAnimation(cubes, direction, timestamp, 0, 0);
@@ -74,23 +75,8 @@ export default function Rubik() {
     // controller.enabled = true;
   }
 
-  function setupRubiks() {
-    // 透明正方体
-    const size = BasicParams.len * BasicParams.num;
-    let box = new THREE.BoxGeometry(size, size, size);
-    let mesh = new THREE.MeshBasicMaterial({
-      opacity: 0,
-      transparent: true,
-    });
-    const rubiks = new THREE.Mesh(box, mesh);
-    rubiks.name = "coverCube";
-    scene.add(rubiks);
-    console.log("coverCube");
-  }
-
   useEffect(() => {
     setupEvents();
-    setupRubiks();
   }, []); // 不会再次运行（开发环境下除外）
 
   /**
@@ -127,6 +113,7 @@ export default function Rubik() {
         //nothing
       }
     }
+    console.log("normalize", normalize);
     return { intersect: intersect, normalize: normalize };
   }
 
@@ -390,6 +377,21 @@ export default function Rubik() {
     return materials;
   };
 
+  const getOpacityRubik = () => {
+    // 透明正方体
+    const size = BasicParams.len * BasicParams.num;
+    const material = new THREE.MeshBasicMaterial({
+      opacity: 0,
+      transparent: true,
+      // color: "red",
+    });
+    return (
+      <mesh material={material} name="coverCube" key="coverCube">
+        <boxGeometry args={[size, size, size]} />
+      </mesh>
+    );
+  };
+
   const genCubes = (
     x: number,
     y: number,
@@ -403,8 +405,11 @@ export default function Rubik() {
     const leftUpZ = z + (num / 2) * len;
 
     const materials = genMaterials();
+    const opacityRubik = getOpacityRubik();
 
     const cubes = [];
+    cubes.push(opacityRubik);
+
     for (let i = 0; i < num; i++) {
       for (let j = 0; j < num * num; j++) {
         let position = { x: 0, y: 0, z: 0 };
