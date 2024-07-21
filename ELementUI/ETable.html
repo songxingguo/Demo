@@ -83,6 +83,28 @@
         nextTick,
       } = Vue;
 
+      function useMaxWidth() {
+        const tableRef = ref();
+        const maxHeight = ref(0);
+
+        onMounted(() => {
+          window.addEventListener("resize", resize);
+        });
+
+        onUnmounted(() => {
+          window.removeEventListener("resize", resize);
+        });
+
+        function resize() {
+          maxHeight.value = 0;
+          nextTick(() => {
+            maxHeight.value = tableRef.value.offsetHeight;
+            console.log(maxHeight.value);
+          });
+        }
+        return { maxHeight, tableRef, resize };
+      }
+
       const App = {
         setup() {
           let tableData = ref([]);
@@ -99,24 +121,7 @@
             });
           });
 
-          onMounted(() => {
-            window.addEventListener("resize", resize);
-          });
-
-          onUnmounted(() => {
-            window.removeEventListener("resize", resize);
-          });
-
-          const tableRef = ref();
-          const maxHeight = ref(0);
-
-          function resize() {
-            maxHeight.value = 0;
-            nextTick(() => {
-              maxHeight.value = tableRef.value.offsetHeight;
-              console.log(maxHeight.value);
-            });
-          }
+          const { maxHeight, tableRef, resize } = useMaxWidth();
 
           resize();
 
