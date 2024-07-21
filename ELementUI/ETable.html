@@ -15,15 +15,21 @@
     <script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
     <script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script>
     <style scoped>
+      body,
+      html {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
       .HolyGrail {
         display: flex;
-        min-height: 100vh;
+        height: 100%;
         flex-direction: column;
       }
 
       header,
       footer {
-        flex: 1;
+        height: 70px;
         background-color: gray;
       }
 
@@ -34,7 +40,6 @@
 
       .HolyGrail-content {
         flex: 1;
-        background-color: orange;
       }
 
       .HolyGrail-nav {
@@ -50,50 +55,77 @@
     </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" class="HolyGrail">
+      <header>头部</header>
+      <div class="HolyGrail-body">
+        <main class="HolyGrail-content" ref="tableRef">
+          <el-table :data="tableData" :max-height="maxHeight">
+            <el-table-column prop="date" label="日期" sortable width="180">
+            </el-table-column>
+            <el-table-column prop="name" label="姓名" sortable width="180">
+            </el-table-column>
+            <el-table-column prop="address" label="地址" :formatter="formatter">
+            </el-table-column>
+          </el-table>
+        </main>
+        <nav class="HolyGrail-nav">导航</nav>
+      </div>
+      <footer>底部</footer>
+    </div>
     <script>
-      const { createApp, ref, reactive } = Vue;
+      const {
+        createApp,
+        ref,
+        onMounted,
+        onUnmounted,
+        onBeforeUnmount,
+        onBeforeMount,
+        nextTick,
+      } = Vue;
+
       const App = {
         setup() {
-          const message = ref("我是按钮");
+          let tableData = ref([]);
+          onBeforeMount(async () => {
+            tableData.value = await new Promise((resolve) => {
+              setTimeout(() => {
+                const data = new Array(100).fill({
+                  date: "2016-05-02",
+                  name: "王小虎",
+                  address: "上海市普陀区金沙江路 1518 弄",
+                });
+                resolve(data);
+              }, 2000);
+            });
+          });
+
+          onMounted(() => {
+            window.addEventListener("resize", resize);
+          });
+
+          onUnmounted(() => {
+            window.removeEventListener("resize", resize);
+          });
+
+          const tableRef = ref();
+          const maxHeight = ref(0);
+
+          function resize() {
+            maxHeight.value = 0;
+            nextTick(() => {
+              maxHeight.value = tableRef.value.offsetHeight;
+              console.log(maxHeight.value);
+            });
+          }
+
+          resize();
+
           return {
-            message,
+            tableData,
+            tableRef,
+            maxHeight,
           };
         },
-        template: `
-        <div class="HolyGrail">
-          <header>头部</header>
-          <div class="HolyGrail-body">
-            <main class="HolyGrail-content">
-                <el-table
-    :data="tableData"
-    style="width: 100%"
-    :default-sort = "{prop: 'date', order: 'descending'}"
-    >
-    <el-table-column
-      prop="date"
-      label="日期"
-      sortable
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      sortable
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="地址"
-      :formatter="formatter">
-    </el-table-column>
-  </el-table>
-            </main>
-            <nav class="HolyGrail-nav">导航</nav>
-          </div>
-          <footer>底部</footer>
-        </div>
-        `,
       };
       const app = createApp(App);
       app.use(ElementPlus);
