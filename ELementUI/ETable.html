@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ETable DEMO</title>
+    <!-- Import style -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/element-plus/dist/index.css"
+    />
+    <!-- Import Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import component library -->
+    <script src="https://cdn.jsdelivr.net/npm/element-plus"></script>
+    <script src="https://cdn.bootcss.com/lodash.js/4.17.11/lodash.min.js"></script>
+    <style scoped>
+      .HolyGrail {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+      }
+
+      header,
+      footer {
+        flex: 1;
+        background-color: gray;
+      }
+
+      .HolyGrail-body {
+        display: flex;
+        flex: 1;
+      }
+
+      .HolyGrail-content {
+        flex: 1;
+        background-color: orange;
+      }
+
+      .HolyGrail-nav {
+        /* 两个边栏的宽度设为12em */
+        flex: 0 0 12em;
+        background-color: blue;
+      }
+
+      .HolyGrail-nav {
+        /* 导航放到最左边 */
+        order: -1;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      const { createApp, ref, reactive } = Vue;
+      const App = {
+        setup() {
+          const message = ref("我是按钮");
+          return {
+            message,
+          };
+        },
+        template: `
+        <div class="HolyGrail">
+          <header>头部</header>
+          <div class="HolyGrail-body">
+            <main class="HolyGrail-content">
+                <el-table
+    :data="tableData"
+    style="width: 100%"
+    :default-sort = "{prop: 'date', order: 'descending'}"
+    >
+    <el-table-column
+      prop="date"
+      label="日期"
+      sortable
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="name"
+      label="姓名"
+      sortable
+      width="180">
+    </el-table-column>
+    <el-table-column
+      prop="address"
+      label="地址"
+      :formatter="formatter">
+    </el-table-column>
+  </el-table>
+            </main>
+            <nav class="HolyGrail-nav">导航</nav>
+          </div>
+          <footer>底部</footer>
+        </div>
+        `,
+      };
+      const app = createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
