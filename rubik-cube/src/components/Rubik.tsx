@@ -68,7 +68,7 @@ export default function Rubik() {
     }
   }
 
-  function stopMouse(event: any) {
+  function stopMouse() {
     startCube = null;
     startPoint = null;
     isRotating = false;
