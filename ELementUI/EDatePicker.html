@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ElementUI时间选择器</title>
+    <!-- Import style -->
+    <link
+      rel="stylesheet"
+      href="//cdn.jsdelivr.net/npm/element-plus/dist/index.css"
+    />
+    <!-- Import Vue 3 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Import component library -->
+    <script src="//cdn.jsdelivr.net/npm/element-plus"></script>
+  </head>
+  <body>
+    <div id="app">
+        <el-date-picker
+        v-model="value"
+        :type="type"
+        placeholder="选择日期时间"
+        :default-time="defaultTime" />
+    </div>
+
+    <script>
+      const { createApp, ref, reactive } = Vue;
+      const App = {
+        setup() {
+          const value = ref('');
+          const defaultTime = new Date(2000, 1, 1, 23, 59, 59);
+          const type = 'datetime';
+          return {
+            value,
+            defaultTime,
+            type
+          };
+        },
+      };
+      const app = createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>
