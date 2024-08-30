@@ -20,7 +20,8 @@
         v-model="value"
         :type="type"
         placeholder="选择日期时间"
-        :default-time="defaultTime" />
+        :default-time="defaultTime"
+        :picker-options="endDateOpt" />
     </div>
 
     <script>
@@ -30,10 +31,16 @@
           const value = ref('');
           const defaultTime = new Date(2000, 1, 1, 23, 59, 59);
           const type = 'datetime';
+          const endDateOpt =  {
+            disabledDate: (time) => {
+                return true;
+            }
+          }
           return {
             value,
             defaultTime,
-            type
+            type,
+            endDateOpt
           };
         },
       };
